@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     //Opens file and checks if file exists
     FILE *fd = fopen(argv[1], "r");
     if(fd == NULL){
-        printf("Error opening file %s\n", argv[1]);
+        perror("fopen():");
         return 0;
     }
     //Converts arguments to integers
@@ -18,8 +18,11 @@ int main(int argc, char* argv[])
     int maxfragsize = atoi(argv[3]);
 
     //Gets file size
-    fseek(fd, 0, SEEK_END);
+    if(fseek(fd, 0, SEEK_END) == -1)
+        perror("fseek():");
     int file_size = ftell(fd);
+    if(file_size == -1)
+        perror("ftell():");
     rewind(fd);
     int maxrandomlimit = file_size - maxfragsize;
 
@@ -30,12 +33,15 @@ int main(int argc, char* argv[])
     for (int i=0; i < numberfrags; i++){
         int random = rand() % maxrandomlimit;
         char* buf = malloc(maxfragsize+1);
-        fseek(fd, random, SEEK_SET);
-        fread(buf, maxfragsize, 1, fd);
+        if(fseek(fd, random, SEEK_SET)==-1)
+            perror("fseek() inside for loop:");
+        if(fread(buf, maxfragsize, 1, fd)==-1)
+            perror("fread() inside for loop:");
         buf[maxfragsize] = '\0';
         printf(">%s<\n", buf);
         free(buf);
     }
-    fclose(fd);
+    if(fclose(fd)==-1)
+        perror("fclose():");
     return 0;
 }
