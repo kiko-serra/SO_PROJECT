@@ -5,18 +5,12 @@
 
 //checks if string has "\n" and substitutes it for ' '(space) 
 void checkstring(char * string){
-
-    for(int i=0; i<strlen(string);i++){
-
-        if(string[i]=='\n'){
+    for(int i=0; i<strlen(string); i++)
+        if(string[i]=='\n')
             string[i]=' ';
-        }
-    }
-
-
 }
-int main(int argc, char* argv[])
-{
+
+int main(int argc, char* argv[]){
     if(argc < 3){
         printf("Usage: samples file numberfrags maxfragsize)\n");
         return 0;
@@ -35,6 +29,7 @@ int main(int argc, char* argv[])
     if(fseek(fd, 0, SEEK_END) == -1)
         perror("fseek():");
     int file_size = ftell(fd);
+    
     if(file_size == -1)
         perror("ftell():");
     rewind(fd);
