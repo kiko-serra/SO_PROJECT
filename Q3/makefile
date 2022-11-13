@@ -1,7 +1,7 @@
-all: Q3
+all: tokenring
 
-Q3: Q3.c
-	gcc -Wall -o Q3 Q3.c
+tokenring: tokenring.c
+	gcc -Wall -o tokenring tokenring.c
 
 clean:
-	@rm -f *.o Q3
+	@rm -f *.o tokenring
