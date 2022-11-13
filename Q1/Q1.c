@@ -1,6 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+
+//checks if string has "\n" and substitutes it for ' '(space) 
+void checkstring(char * string){
+
+    for(int i=0; i<strlen(string);i++){
+
+        if(string[i]=='\n'){
+            string[i]=' ';
+        }
+    }
+
+
+}
 int main(int argc, char* argv[])
 {
     if(argc < 3){
@@ -38,6 +52,7 @@ int main(int argc, char* argv[])
         if(fread(buf, maxfragsize, 1, fd)==-1)
             perror("fread() inside for loop:");
         buf[maxfragsize] = '\0';
+        checkstring(buf);
         printf(">%s<\n", buf);
         free(buf);
     }
