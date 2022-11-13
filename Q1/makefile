@@ -1,7 +1,7 @@
-all: Q1
+all: samples
 
-Q1: Q1.c
-	gcc -Wall -o Q1 Q1.c  
+Q1: samples.c
+	gcc -Wall -o samples samples.c  
 
 clean:
-	@rm -f *.o Q1
+	@rm -f *.o samples
