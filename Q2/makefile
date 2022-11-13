@@ -1,7 +1,7 @@
-all: Q2
+all: txt2epub
 
-Q2: Q2.c
-	gcc -Wall -o Q2 Q2.c  
+txt2epub: txt2epub.c
+	gcc -Wall -o txt2epub txt2epub.c  
 
 clean:
-	@rm -f *.o Q2
+	@rm -f *.o txt2epub

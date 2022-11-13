@@ -1,6 +1,6 @@
 all: samples
 
-Q1: samples.c
+samples: samples.c
 	gcc -Wall -o samples samples.c  
 
 clean:
