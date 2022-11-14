@@ -21,12 +21,14 @@ int main(int argc, char *argv[]){
         pid_t pid = fork();
         if (pid == 0){
             printf("[pid%d] converting %s ...\n", getpid(), argv[i]);
-            char string[10000] = "pandoc ";
-            strcat(string, argv[i]);
-            strcat(string, " -o ");
-            strcat(string, strcat(strtok(argv[i], "."), ".epub"));
 
-            if (execlp("/bin/sh", "/bin/sh", "-c", string, (char *)NULL) == -1)
+            //Creating command to use in execlp
+            char command[10000] = "pandoc ";
+            strcat(command, argv[i]);
+            strcat(command, " -o ");
+            strcat(command, strcat(strtok(argv[i], "."), ".epub"));
+
+            if (execlp("/bin/sh", "/bin/sh", "-c", command, (char *)NULL) == -1)
                 perror("execlp():");
             printf("Child %d finished\n", i);
             return 0;
@@ -37,10 +39,10 @@ int main(int argc, char *argv[]){
         }
     }
     // Waiting for the childs to end
-    for (int i = 1; i < argc; i++){
+    for (int i = 1; i < argc; i++)
         if (wait(NULL) == -1)
             perror("wait():");
-    }
+
     // executing the zip command
     if (execlp("/bin/sh", "/bin/sh", "-c", zipcommand, (char *)NULL) == -1)
         perror("execlp():");
