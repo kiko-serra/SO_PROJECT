@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
         char* buf = malloc(maxfragsize+1);
         if(fseek(fd, random, SEEK_SET)==-1)
             perror("fseek() inside for loop:");
-        if(fread(buf, maxfragsize, 1, fd)==-1)
+        if(fread(buf, 1,maxfragsize, fd)==-1)
             perror("fread() inside for loop:");
         buf[maxfragsize] = '\0';
         checkstring(buf);
