@@ -26,7 +26,6 @@ int main(int argc, char *argv[]){
             strcat(string, " -o ");
             strcat(string, strcat(strtok(argv[i], "."), ".epub"));
 
-            // strcat("pandoc",strcat(argv[i],strcat(" -o ",strtok(argv[i], "."), ".epub"))
             if (execlp("/bin/sh", "/bin/sh", "-c", string, (char *)NULL) == -1)
                 perror("execlp():");
             printf("Child %d finished\n", i);
