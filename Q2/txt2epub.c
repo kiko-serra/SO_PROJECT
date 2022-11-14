@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
         if (wait(NULL) == -1)
             perror("wait():");
 
-    // executing the zip command
+    // Executing the zip command
     if (execlp("/bin/sh", "/bin/sh", "-c", zipcommand, (char *)NULL) == -1)
         perror("execlp():");
 
