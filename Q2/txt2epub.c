@@ -30,7 +30,6 @@ int main(int argc, char *argv[]){
 
             if (execlp("/bin/sh", "/bin/sh", "-c", command, (char *)NULL) == -1)
                 perror("execlp():");
-            printf("Child %d finished\n", i);
             return 0;
         }
         else if (pid == -1){
