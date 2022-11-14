@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
             char command[10000] = "pandoc ";
             strcat(command, argv[i]);
             strcat(command, " -o ");
+            //!!! mudar strcat para variaveis e fazer strlen +2 
             strcat(command, strcat(strtok(argv[i], "."), ".epub"));
 
             if (execlp("/bin/sh", "/bin/sh", "-c", command, (char *)NULL) == -1)
