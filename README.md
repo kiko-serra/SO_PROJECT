@@ -27,7 +27,7 @@ $ ./tokenring n p t
 !!! Escrever a definicao de cada argumento (n p t).
 
 
-### Clean
+## Clean
 To clean each folder, run the following command:
 ```
 make clean
