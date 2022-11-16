@@ -1,32 +1,35 @@
 # SO_PROJECT
 
 ## Description
-To compile the each program, run the following command inside the corresponding folder:
+To compile and run each program, run the following command inside the corresponding folder:
 ```
 make
 ```
 ## Q1
-For Q1 after compiling, run the following command:
+To change the variables inside the makefile change the following line (Q1/makefile):
 ```
-$ ./samples quote.txt n m
+run:
+    ./samples fileName.txt n m
 ```
-Where n is the number of fragments and m is the number of chatacters.
+Where n is the number of fragments and m is the number of chatacters and fileName is the name of the file you will test.
 
 ## Q2
-For Q2 after compiling, run the following command:
+To change the variables inside the makefile change the following line (Q2/makefile):
 ```
-$ ./txt2epub f1.txt f2.txt f3.txt ... fn.tx
+run:
+	./txt2epub f1.txt f2.txt f3.txt f4.txt ... fn.txt
 ```
 Where n is the last file you wish to process.
 
 ## Q3
-For Q3 after compiling, run the following command:
+To change the variables inside the makefile change the following line (Q3/makefile):
 ```
-$ ./tokenring n p t
+run:
+    ./tokenring n p t
 ```
 !!! Escrever a definicao de cada argumento (n p t).
 
 Francisco Pimentel Serra up202007723@fe.up.pt<br>
 Pedro Miguel da Silva Correia up202006199@fe.up.pt<br>
-Guilherme de Sousa Ribeiro up202108731@fe.up.pt
+Guilherme de Sousa Ribeiro up202108731@fe.up.pt<br>
 
