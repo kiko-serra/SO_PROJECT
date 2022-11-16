@@ -20,13 +20,13 @@ void getFileName (char * buf){
 int main(int argc, char *argv[]){
     if (argc < 2){
         printf("Usage: %s file1 file2 ... filen\n", argv[0]);
-        return 0;
+        return EXIT_FAILURE;
     }
     char zipcommand[10000] = "zip ebooks.zip ";
     for (int i = 1; i < argc; i++){
         if(checkExtension(argv[i])){
             printf("Error: %s is not a .txt file\n", argv[i]);
-            return 0;
+            return EXIT_FAILURE;
         }
         char c[10000];
         strcpy(c, argv[i]);
@@ -50,21 +50,25 @@ int main(int argc, char *argv[]){
 
             if (execlp("/bin/sh", "/bin/sh", "-c", command, (char *)NULL) == -1)
                 perror("execlp():");
-            return 0;
+            return EXIT_FAILURE;
         }
         else if (pid == -1){
             perror("fork():");
-            return 0;
+            return EXIT_FAILURE;
         }
     }
     // Waiting for the childs to end
     for (int i = 1; i < argc; i++)
-        if (wait(NULL) == -1)
+        if (wait(NULL) == -1){
             perror("wait():");
+            return EXIT_FAILURE;
+        }
 
     // Executing the zip command
-    if (execlp("/bin/sh", "/bin/sh", "-c", zipcommand, (char *)NULL) == -1)
+    if (execlp("/bin/sh", "/bin/sh", "-c", zipcommand, (char *)NULL) == -1){
         perror("execlp():");
+        return EXIT_FAILURE;
+    }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
