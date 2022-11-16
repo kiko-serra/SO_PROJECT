@@ -4,7 +4,7 @@
 #include <string.h>
 
 //checks if string has "\n" and substitutes it for ' '(space) 
-void checkstring(char * string){
+void checkString(char * string){
     for(int i=0; i<strlen(string); i++)
         if(string[i]=='\n')
             string[i]=' ';
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
         if(fread(buf, 1,maxfragsize, fd)==-1)
             perror("fread() inside for loop:");
         buf[maxfragsize] = '\0';
-        checkstring(buf);
+        checkString(buf);
         printf(">%s<\n", buf);
         free(buf);
     }
