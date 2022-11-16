@@ -1,4 +1,4 @@
-all: samples run
+all: samples
 
 samples: samples.c
 	gcc -Wall -o samples samples.c

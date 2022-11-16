@@ -1,4 +1,4 @@
-all: txt2epub run
+all: txt2epub
 
 txt2epub: txt2epub.c
 	gcc -Wall -o txt2epub txt2epub.c  

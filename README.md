@@ -6,30 +6,34 @@ To compile and run each program, run the following command inside the correspond
 make
 ```
 ## Q1
-To change the variables inside the makefile change the following line (Q1/makefile):
+For Q1 after compiling, run the following command:
 ```
-run:
-    ./samples fileName.txt n m
+$ ./samples quote.txt n m
 ```
-Where n is the number of fragments and m is the number of chatacters and fileName is the name of the file you will test.
+Where n is the number of fragments and m is the number of chatacters.
 
 ## Q2
-To change the variables inside the makefile change the following line (Q2/makefile):
+For Q2 after compiling, run the following command:
 ```
-run:
-	./txt2epub f1.txt f2.txt f3.txt f4.txt ... fn.txt
+$ ./txt2epub f1.txt f2.txt f3.txt ... fn.tx
 ```
 Where n is the last file you wish to process.
 
 ## Q3
-To change the variables inside the makefile change the following line (Q3/makefile):
+For Q3 after compiling, run the following command:
 ```
-run:
-    ./tokenring n p t
+$ ./tokenring n p t
 ```
 !!! Escrever a definicao de cada argumento (n p t).
 
+
+### Clean
+To clean each folder, run the following command:
+```
+make clean
+```
+
 Francisco Pimentel Serra up202007723@fe.up.pt<br>
 Pedro Miguel da Silva Correia up202006199@fe.up.pt<br>
-Guilherme de Sousa Ribeiro up202108731@fe.up.pt<br>
+Guilherme de Sousa Ribeiro up202108731@fe.up.pt
 
