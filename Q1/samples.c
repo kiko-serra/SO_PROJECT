@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
 
     for (int i=0; i < numberfrags; i++){
         int random = rand() % maxrandomlimit;
-        char* buf = malloc(maxfragsize+1);
+        char* buf = (char *) malloc(maxfragsize+1*(sizeof(char)));
         if(fseek(fd, random, SEEK_SET)==-1){
             perror("fseek() inside for loop:");
             return EXIT_FAILURE;
