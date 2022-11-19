@@ -8,12 +8,55 @@
 #include <sys/types.h> // as ultimas 3 são para o mkfifo
 #include <fcntl.h>
 
+//creates a named pipe, example: pipe1to2
+int createpipes(int from, int to){
+
+    char * pipe=(char*)malloc(5);
+    strcpy(pipe,"pipe");
+
+    // turns the number from into  a string
+    int length = snprintf( NULL, 0, "%d", from );
+    char* fromnumber = malloc( length + 1 );
+    snprintf( fromnumber, length + 1, "%d", from );
+    fromnumber[length]='\0';
+    
+    // turns the number to into  a string
+    length = snprintf( NULL, 0, "%d", to );
+    char * tonumber= malloc( length + 1 );
+    snprintf( tonumber, length + 1, "%d", to );
+    tonumber[length]='\0';
+    
+   
+    pipe=(char*)realloc(pipe,strlen(pipe)+strlen(fromnumber)+2+strlen(tonumber)+1);
+    strcat(pipe,fromnumber);
+    strcat(pipe,"to");
+    strcat(pipe,tonumber);  
+    pipe[strlen(pipe)]='\0';
+    
+    if(mkfifo(pipe,0777)==-1){ 
+        // só da erro caso o ficheiro não exista
+        if(errno !=EEXIST){
+            perror("mkfifo():");
+            return EXIT_FAILURE;
+        }   
+    }
+
+    free(fromnumber);
+    free(tonumber);
+    free(pipe);
+
+    return 0;
+}
+
+//increases string number by 1
 void increasenumber(char*buf){
 
     int valor=atoi(buf);
     valor++;
     sprintf(buf, "%d", valor);
+    
 }
+
 int main(int argc, char* argv[]){
 
     if(argc != 4){
@@ -27,30 +70,37 @@ int main(int argc, char* argv[]){
     time_t t;
     srand((unsigned) time(&t));
 
+
+// -------------------- CREATE PIPES----------------------------------------  
+
+
+    // ARRANJAR MANEIRA DE GUARDAR QUAL PIPE A SER USADO PELO PROCESO
+    // QUANDO SE FAZ FORK
+    for (int i = 1; i <= numberOfPipes; i++)
+    {   
+        if(i==numberOfPipes){
+            if(createpipes(i,1))
+                return EXIT_FAILURE;
+        }
+        else
+            if(createpipes(i,i+1))
+                return EXIT_FAILURE;
+    }
+    
    
- // -------------------- CREATE PIPES----------------------------------------   
-    if(mkfifo("pipe1to2",0777)==-1){ 
-        // só da erro caso o ficheiro não exista
-        if(errno !=EEXIST){
-            perror("mkfifo():");
-            return EXIT_FAILURE;
-        }   
-    }
-    if(mkfifo("pipe2to1",0777)==-1){ 
-        // só da erro caso o ficheiro não exista
-        if(errno !=EEXIST){
-            perror("mkfifo():");
-            return EXIT_FAILURE;
-        }   
-    }
-// ------------------------------------------------------------
-    pid_t pid;
+ 
+// ------------------------------------------------------------  
+
+// O QUE TÁ EM BAIXO SÓ FUNCIONA quando n=2
+    
+    
+ pid_t pid = fork();
     if ((pid = fork()) < 0) {
-    perror("fork error");
-    exit(EXIT_FAILURE);
+        perror("fork error");
+        exit(EXIT_FAILURE);
     }
     else if (pid > 0) {
-        /* parent */
+        // parent 
        
         printf("No pai:\n");
 //--------------------- OPENING PIPES-----------------------------------------
@@ -149,7 +199,7 @@ int main(int argc, char* argv[]){
     printf("Written\n");
     close(fd);
     printf("Clossed\n");
-*/ 
 
+*/
     return 0;
 }
