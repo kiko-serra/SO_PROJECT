@@ -22,26 +22,26 @@ int main(int argc, char *argv[]){
         printf("Usage: %s file1 file2 ... filen\n", argv[0]);
         return EXIT_FAILURE;
     }
-   // char zipcommand[10000] = "zip ebooks.zip ";
-   char * zipcommand=(char*)malloc(16);
-   strcpy(zipcommand,"zip ebooks.zip ");
-    zipcommand[15]='\0';
+
+    char* zip_argument_list[argc+2];
+    zip_argument_list[0]=(char*)malloc((strlen("zip")+1)*sizeof(char));
+    strcpy(zip_argument_list[0],"zip");
+    zip_argument_list[1]=(char*)malloc((1+strlen("ebooks.zip"))*sizeof(char));
+    strcpy(zip_argument_list[1],"ebooks.zip");
+    zip_argument_list[argc+1]=NULL;
+  
+   
     for (int i = 1; i < argc; i++){
         if(checkExtension(argv[i])){
             printf("Error: %s is not a .txt file\n", argv[i]);
             return EXIT_FAILURE;
         }
-        printf("TAmanho argv[%d]:%d\n",i,strlen(argv[i]));
-        char *c=(char*)malloc(strlen(argv[i])+2);
+        char *c=(char*)malloc(strlen(argv[i])+3);
         strcpy(c, argv[i]);
         getFileName(c);
-        printf("C:%s\n",c);
-        char *epub_file = strcat(c, ".epub ");
-        printf("Epub:%s\n",epub_file);
-        zipcommand=(char *)realloc(zipcommand,strlen(zipcommand)+strlen(epub_file)+1);
-        strcat(zipcommand, epub_file);
-        zipcommand[strlen(zipcommand)]='\0'; 
-        
+        char *epub_file = strcat(c,".epub ");
+        zip_argument_list[1+i]=(char*)malloc((strlen(epub_file)+1)*sizeof(char));
+        strcpy(zip_argument_list[1+i], epub_file);
         free(c);
         //free(epub_file);
     }
@@ -51,24 +51,18 @@ int main(int argc, char *argv[]){
         if (pid == 0){
             printf("[pid%d] converting %s ...\n", getpid(), argv[i]);
 
-            //Creating command to use in execlp
-          //  char command[10000] = "pandoc ";
-            char * command=(char *)malloc(8);
-            strcpy(command,"pandoc ");
-            command=(char*)realloc(command,strlen(command)+strlen(argv[i]));
-            strcat(command, argv[i]);
-            command=(char*)realloc(command,strlen(command)+5);
-            strcat(command, " -o ");
+        
+            char* oldfilename=(char*)malloc(strlen(argv[i])+2);
+            strcpy(oldfilename,argv[i]);
+            char *newfilename=(char*)malloc(strlen(argv[i])+2);
+            getFileName(oldfilename);
             
-            //!!! mudar strcat para variaveis e fazer strlen +2 
-            getFileName(argv[i]);
-            command=(char*)realloc(command,strlen(command)+strlen(argv[i])+6);
-            strcat(command, strcat(argv[i], ".epub"));
-            command[strlen(command)]='\0';
-            if (execlp("/bin/sh", "/bin/sh", "-c", command, (char *)NULL) == -1)
+            strcat(newfilename,strcat(oldfilename,".epub"));
+            if (execlp("pandoc", "pandoc", argv[i],"-o",newfilename, (char *)NULL) == -1)
                 perror("execlp():");
 
-            free(command);    
+            free(oldfilename);
+            free(newfilename);    
             return EXIT_FAILURE;
         }
         else if (pid == -1){
@@ -84,8 +78,11 @@ int main(int argc, char *argv[]){
         }
 
     // Executing the zip command
-    if (execlp("/bin/sh", "/bin/sh", "-c", zipcommand, (char *)NULL) == -1){
-        perror("execlp():");
+    for(int i=0;i<argc+2;i++){
+        printf("arra[%d]=%s\n",i,zip_argument_list[i]);
+    }
+    if (execvp("zip",zip_argument_list)== -1){
+        perror("execvp():");
         return EXIT_FAILURE;
     }
 
