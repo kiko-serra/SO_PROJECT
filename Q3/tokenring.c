@@ -13,21 +13,20 @@
 //creates a named pipe, example: pipe1to2
 int createpipes(int numberOfPipes){
     
-
+    char * pipe=(char*)malloc(1*sizeof(char));
+    printf("BEFOTE FOR\n");
     for (int i = 1; i <= numberOfPipes; i++)
     {   
-        char * pipe;
         int length1= snprintf( NULL, 0, "%d", i );
         if(i==numberOfPipes){
-            pipe=(char*)malloc((length1+1+6+1)*sizeof(char));
-            snprintf(pipe, "pipe%dto", i);
+            pipe=(char*)realloc(pipe,(length1+7+1)*sizeof(char));
+            sprintf(pipe, "pipe%dto1", i);
         }
         else{
             int length2=snprintf( NULL, 0, "%d", i+1 );
-            pipe=(char*) malloc((length1+length2+6+1)*sizeof(char));
-            snprintf(pipe, "pipe%dto%d", i,i+1);
+            pipe=(char*) realloc(pipe,(length1+length2+6+1)*sizeof(char));    
+            sprintf(pipe, "pipe%dto%d", i,i+1);
         }
-
         if(mkfifo(pipe,0777)==-1){ 
             // só da erro caso o ficheiro não exista
             if(errno !=EEXIST){
@@ -35,8 +34,8 @@ int createpipes(int numberOfPipes){
                 return EXIT_FAILURE;
             }
         } 
-        free(pipe);
     }
+    free(pipe);
     return 0;
 /*
      char * pipe=(char*)malloc(5);
@@ -93,25 +92,11 @@ int main(int argc, char* argv[]){
     int val=0;
     time_t t;
     //srand((unsigned) time(&t));
-
-    /*if(createpipes(numberOfPipes)){
+    printf("BEFOTE\n");
+    if(createpipes(numberOfPipes)){
         printf("Error creating pipes\n");
         return 1;
-    }*/
-    char *loc = (char*)malloc(50 * sizeof(char));
-    for(int i = 1; i <= atoi(argv[1]); i++) {
-        if(i == atoi(argv[1]))
-            sprintf(loc, "pipe%dto1", i);
-        else
-            sprintf(loc, "pipe%dto%d", i, i+1);
-
-        if((mkfifo(loc, 0666)) < 0) {
-            if(errno !=EEXIST){
-            fprintf(stderr, "%s: mkfifo error: %s", argv[0], strerror(errno));
-            exit(EXIT_FAILURE);}
-        }
     }
-    free(loc);
     
     pid_t pid[numberOfPipes];
     char *wpipe = (char*)malloc(10000 * sizeof(char));
