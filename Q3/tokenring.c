@@ -8,10 +8,38 @@
 #include <sys/types.h> // as ultimas 3 são para o mkfifo
 #include <fcntl.h>
 
-//creates a named pipe, example: pipe1to2
-int createpipes(int from, int to){
 
-    char * pipe=(char*)malloc(5);
+
+//creates a named pipe, example: pipe1to2
+int createpipes(int numberOfPipes){
+    
+
+    for (int i = 1; i <= numberOfPipes; i++)
+    {   
+        char * pipe;
+        int length1= snprintf( NULL, 0, "%d", i );
+        if(i==numberOfPipes){
+            pipe=(char*)malloc((length1+1+6+1)*sizeof(char));
+            snprintf(pipe, "pipe%dto", i);
+        }
+        else{
+            int length2=snprintf( NULL, 0, "%d", i+1 );
+            pipe=(char*) malloc((length1+length2+6+1)*sizeof(char));
+            snprintf(pipe, "pipe%dto%d", i,i+1);
+        }
+
+        if(mkfifo(pipe,0777)==-1){ 
+            // só da erro caso o ficheiro não exista
+            if(errno !=EEXIST){
+                perror("mkfifo():");
+                return EXIT_FAILURE;
+            }
+        } 
+        free(pipe);
+    }
+    return 0;
+/*
+     char * pipe=(char*)malloc(5);
     strcpy(pipe,"pipe");
 
     // turns the number from into  a string
@@ -33,6 +61,8 @@ int createpipes(int from, int to){
     strcat(pipe,tonumber);  
     pipe[strlen(pipe)]='\0';
     
+
+
     if(mkfifo(pipe,0777)==-1){ 
         // só da erro caso o ficheiro não exista
         if(errno !=EEXIST){
@@ -46,16 +76,9 @@ int createpipes(int from, int to){
     free(pipe);
 
     return 0;
+    */
 }
 
-//increases string number by 1
-void increasenumber(char*buf){
-
-    int valor=atoi(buf);
-    valor++;
-    sprintf(buf, "%d", valor);
-    
-}
 
 int main(int argc, char* argv[]){
 
@@ -67,34 +90,124 @@ int main(int argc, char* argv[]){
     int numberOfPipes=atoi(argv[1]);
     double probability=atof(argv[2]);
     int waitTime=atoi(argv[3]);
+    int val=0;
     time_t t;
-    srand((unsigned) time(&t));
+    //srand((unsigned) time(&t));
 
-
-// -------------------- CREATE PIPES----------------------------------------  
-
-
-    // ARRANJAR MANEIRA DE GUARDAR QUAL PIPE A SER USADO PELO PROCESO
-    // QUANDO SE FAZ FORK
-    for (int i = 1; i <= numberOfPipes; i++)
-    {   
-        if(i==numberOfPipes){
-            if(createpipes(i,1))
-                return EXIT_FAILURE;
-        }
+    /*if(createpipes(numberOfPipes)){
+        printf("Error creating pipes\n");
+        return 1;
+    }*/
+    char *loc = (char*)malloc(50 * sizeof(char));
+    for(int i = 1; i <= atoi(argv[1]); i++) {
+        if(i == atoi(argv[1]))
+            sprintf(loc, "pipe%dto1", i);
         else
-            if(createpipes(i,i+1))
-                return EXIT_FAILURE;
-    }
-    
-   
- 
-// ------------------------------------------------------------  
+            sprintf(loc, "pipe%dto%d", i, i+1);
 
-// O QUE TÁ EM BAIXO SÓ FUNCIONA quando n=2
+        if((mkfifo(loc, 0666)) < 0) {
+            if(errno !=EEXIST){
+            fprintf(stderr, "%s: mkfifo error: %s", argv[0], strerror(errno));
+            exit(EXIT_FAILURE);}
+        }
+    }
+    free(loc);
     
-    
- pid_t pid = fork();
+    pid_t pid[numberOfPipes];
+    char *wpipe = (char*)malloc(10000 * sizeof(char));
+    char *rpipe = (char*)malloc(10000 * sizeof(char));
+    for (int i = 1; i <= numberOfPipes; i++)
+    {
+        if((pid[i-1]=fork())<0){
+            fprintf(stderr, "Unable to create pipe: %s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+        else if(pid[i-1] == 0){
+            if(i == atoi(argv[1])) {
+                sprintf(wpipe, "pipe%dto1", i);
+                sprintf(rpipe, "pipe%dto%d", i-1, i);
+            } 
+            else if(i == 1) {
+                sprintf(wpipe, "pipe%dto%d", i, i+1);
+                sprintf(rpipe, "pipe%dto1", numberOfPipes);
+            } 
+            else {
+                sprintf(wpipe, "pipe%dto%d", i, i+1);
+                sprintf(rpipe, "pipe%dto%d", i-1, i);
+            }
+            srandom(time(NULL) - i );
+            /* store pipes in an array */
+            int fd[2];
+
+            if(i == 1) {
+                if((fd[1] = open(wpipe, O_WRONLY)) < 0) {
+                    fprintf(stderr, "Unable to read from file: %s\n", strerror(errno));
+                    exit(EXIT_FAILURE);
+                }
+
+                val++;
+
+                if(write(fd[1], &val, sizeof(int)) < 0) {
+                     fprintf(stderr, "Unable to write to pipe: %s\n", strerror(errno));
+                     exit(EXIT_FAILURE);
+                }
+
+                close(fd[1]);
+            }
+
+
+            while(1) {
+
+                /* read value from previous process */
+                if((fd[0] = open(rpipe, O_RDONLY)) < 0) {
+                    fprintf(stderr, "%s: pipe opening error: %s\n", argv[0], strerror(errno));
+                    exit(EXIT_FAILURE);
+                }
+
+                if(read(fd[0], &val, sizeof(int)) < 0) {
+                    fprintf(stderr, "%s: read error: %s\n", argv[0], strerror(errno));
+                    exit(EXIT_FAILURE);
+                }
+
+                close(fd[0]);
+
+                val++; // increments value
+                
+                int rand = random() % (int)( 1/probability);
+                if(rand == 1) {
+                    printf("[p%d] lock on token (val = %d)\n", i, val);
+                    sleep(waitTime);
+                    printf("[p%d] unlock token\n", i);
+                }
+
+                /* writes value to next process */
+                if((fd[1] = open(wpipe, O_WRONLY)) < 0) {
+                    fprintf(stderr, "%s: pipe opening error: %s\n", argv[0], strerror(errno));
+                    exit(EXIT_FAILURE);
+                }
+                
+                if(write(fd[1], &val, sizeof(int)) < 0) {
+                    fprintf(stderr, "%s: write error: %s\n", argv[0], strerror(errno));
+                    exit(EXIT_FAILURE);
+                }
+
+                close(fd[1]);
+            }
+
+             exit(EXIT_SUCCESS);
+        }
+    }
+
+     for(int i = 0; i < numberOfPipes; i++) {
+        if(waitpid(pid[i], NULL, 0) < 0) {
+            fprintf(stderr, "%s: waitpid error: %s\n", argv[0], strerror(errno));
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+    /*
+     pid_t pid = fork();
     if ((pid = fork()) < 0) {
         perror("fork error");
         exit(EXIT_FAILURE);
@@ -103,7 +216,7 @@ int main(int argc, char* argv[]){
         // parent 
        
         printf("No pai:\n");
-//--------------------- OPENING PIPES-----------------------------------------
+
         int fd1=open("pipe1to2",O_WRONLY); //returns file descriptor
         if(fd1==-1){
         printf("Error openning the file\n");
@@ -114,7 +227,7 @@ int main(int argc, char* argv[]){
         printf("Error openning the file 2\n");
         return EXIT_FAILURE;
         }
-// ------------------------------------------------------------
+
 
         char line[256]="100";
         int nbytes;
@@ -126,8 +239,6 @@ int main(int argc, char* argv[]){
             perror("write()");
             exit(EXIT_FAILURE);
         }
-
-
         if ((nbytes = read(fd2, line, 256)) <=0 ) {
              if(errno !=EEXIST)
                 fprintf(stderr, "Unable to read from file: %s\n", strerror(errno));
@@ -139,51 +250,42 @@ int main(int argc, char* argv[]){
             printf("\n");
             increasenumber(line);
         }
-    }
-        
- // ------------------------------------------------------------        
-        if ( waitpid(pid, NULL, 0) < 0) {
+    }     
+    /*    if ( waitpid(pid, NULL, 0) < 0) {
             fprintf(stderr, "Cannot wait for child: %s\n", strerror(errno));
         }
+        
         exit(EXIT_SUCCESS);
     }
     else {
         
-         printf("No filho:\n");
- //--------------------- OPENING PIPES-----------------------------------------        
+         printf("No filho:\n");       
          int fd1=open("pipe1to2",O_RDONLY); //returns file descriptor
          int fd2=open("pipe2to1",O_WRONLY); //returns file descriptor
- // ------------------------------------------------------------ 
-
          char line[256];
          int nbytes;
-
-//--------------------- CICLO LER E ESCREVER-----------------------------------------
         while(1){
-
             if ((nbytes = read(fd1, line, 256)) <=0 ) {   
-                if(errno !=EEXIST)
+                if(errno !=EEXIST){
+                    
+                }
                     fprintf(stderr, "Unable to read from file: %s\n", strerror(errno));
                     close(fd1);
-                }
+            }
             else{
                 write(STDOUT_FILENO, line, nbytes);
                 printf("\n");
             }
                     
-            
             increasenumber(line);
-        
             if(write(fd2,line,sizeof(line))==-1){
                 perror("write()");
                 exit(EXIT_FAILURE);
             }
-
         }
-         
-         
         exit(EXIT_SUCCESS);
     }
+}
     /*printf("Opening...\n");
     int fd=open("myfifo1",O_WRONLY); //returns file descriptor
     if(fd==-1){
@@ -200,6 +302,6 @@ int main(int argc, char* argv[]){
     close(fd);
     printf("Clossed\n");
 
-*/
-    return 0;
+
+    return 0;*/
 }
