@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h> // as ultimas 3 são para o mkfifo
+#include <sys/types.h> 
 #include <fcntl.h>
 
 
@@ -14,7 +14,7 @@
 int createpipes(int numberOfPipes){
     
     char * pipe=(char*)malloc(1*sizeof(char));
-    printf("BEFOTE FOR\n");
+  
     for (int i = 1; i <= numberOfPipes; i++)
     {   
         int length1= snprintf( NULL, 0, "%d", i );
@@ -28,7 +28,7 @@ int createpipes(int numberOfPipes){
             sprintf(pipe, "pipe%dto%d", i,i+1);
         }
         if(mkfifo(pipe,0777)==-1){ 
-            // só da erro caso o ficheiro não exista
+            //it doesn´t trow an error if the file already exists
             if(errno !=EEXIST){
                 perror("mkfifo():");
                 return EXIT_FAILURE;
@@ -92,15 +92,15 @@ int main(int argc, char* argv[]){
     int val=0;
     time_t t;
     //srand((unsigned) time(&t));
-    printf("BEFOTE\n");
+   
     if(createpipes(numberOfPipes)){
         printf("Error creating pipes\n");
         return 1;
     }
     
     pid_t pid[numberOfPipes];
-    char *wpipe = (char*)malloc(10000 * sizeof(char));
-    char *rpipe = (char*)malloc(10000 * sizeof(char));
+    char *wpipe = (char*)malloc(1 * sizeof(char));
+    char *rpipe = (char*)malloc(1 * sizeof(char));
     for (int i = 1; i <= numberOfPipes; i++)
     {
         if((pid[i-1]=fork())<0){
@@ -109,14 +109,28 @@ int main(int argc, char* argv[]){
         }
         else if(pid[i-1] == 0){
             if(i == atoi(argv[1])) {
+                int length1= snprintf( NULL, 0, "%d", i );
+                int length2= snprintf( NULL, 0, "%d", i-1 );
+                wpipe=(char*)realloc(wpipe,(length1+7+1)*sizeof(char));
+                rpipe=(char*)realloc(rpipe,(length1+length2+6+1)*sizeof(char));
                 sprintf(wpipe, "pipe%dto1", i);
                 sprintf(rpipe, "pipe%dto%d", i-1, i);
             } 
             else if(i == 1) {
+                int length1= snprintf( NULL, 0, "%d", i );
+                int length2= snprintf( NULL, 0, "%d", i+1 );
+                int length3=snprintf( NULL, 0, "%d", numberOfPipes);
+                wpipe=(char*)realloc(wpipe,(length1+length2+6+1)*sizeof(char));
+                rpipe=(char*)realloc(rpipe,(length3+7+1)*sizeof(char));
                 sprintf(wpipe, "pipe%dto%d", i, i+1);
                 sprintf(rpipe, "pipe%dto1", numberOfPipes);
             } 
             else {
+                int length1= snprintf( NULL, 0, "%d", i );
+                int length2= snprintf( NULL, 0, "%d", i+1 );
+                int length3=snprintf( NULL, 0, "%d", i-1);
+                wpipe=(char*)realloc(wpipe,(length1+length2+6+1)*sizeof(char));
+                rpipe=(char*)realloc(rpipe,(length1+length3+6+1)*sizeof(char));
                 sprintf(wpipe, "pipe%dto%d", i, i+1);
                 sprintf(rpipe, "pipe%dto%d", i-1, i);
             }
@@ -145,12 +159,12 @@ int main(int argc, char* argv[]){
 
                 /* read value from previous process */
                 if((fd[0] = open(rpipe, O_RDONLY)) < 0) {
-                    fprintf(stderr, "%s: pipe opening error: %s\n", argv[0], strerror(errno));
+                    fprintf(stderr, "Unable to read from file: %s\n", strerror(errno));
                     exit(EXIT_FAILURE);
                 }
 
                 if(read(fd[0], &val, sizeof(int)) < 0) {
-                    fprintf(stderr, "%s: read error: %s\n", argv[0], strerror(errno));
+                    fprintf(stderr, "Unable to write to pipe: %s\n", strerror(errno));
                     exit(EXIT_FAILURE);
                 }
 
@@ -167,12 +181,12 @@ int main(int argc, char* argv[]){
 
                 /* writes value to next process */
                 if((fd[1] = open(wpipe, O_WRONLY)) < 0) {
-                    fprintf(stderr, "%s: pipe opening error: %s\n", argv[0], strerror(errno));
+                    fprintf(stderr, "Unable to read from file: %s\n", strerror(errno));
                     exit(EXIT_FAILURE);
                 }
                 
                 if(write(fd[1], &val, sizeof(int)) < 0) {
-                    fprintf(stderr, "%s: write error: %s\n", argv[0], strerror(errno));
+                    fprintf(stderr, "Unable to write to pipe: %s\n", strerror(errno));
                     exit(EXIT_FAILURE);
                 }
 
