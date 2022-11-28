@@ -8,3 +8,6 @@ run:
 
 clean:
 	@rm -rf *.o samples *.dSYM
+
+valgrind:
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./samples quote.txt 4 8
