@@ -7,4 +7,4 @@ run:
 	./tokenring 5 0.01 10
 
 clean:
-	@rm -rf *.o tokenring
+	@rm -rf *.o tokenring pipe*

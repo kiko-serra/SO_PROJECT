@@ -35,5 +35,5 @@ make clean
 
 Francisco Pimentel Serra up202007723@fe.up.pt<br>
 Pedro Miguel da Silva Correia up202006199@fe.up.pt<br>
-Guilherme de Sousa Ribeiro up202108731@fe.up.pt
-
+Guilherme de Sousa Ribeiro up202108731@fe.up.pt<br>
+João Pedro Silva Duarte up201504089@fe.up.pt<br>

@@ -1,6 +1,0 @@
-==1637== Memcheck, a memory error detector
-==1637== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==1637== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==1637== Command: ./txt2epub f1.txt f2.txt f3.txt f4.txt
-==1637== Parent PID: 127
-==1637== 
