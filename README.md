@@ -24,13 +24,18 @@ For Q3 after compiling, run the following command:
 ```
 $ ./tokenring n p t
 ```
-!!! Escrever a definicao de cada argumento (n p t).
+Where n is the number of pipes, p is the probability and t is the waiting time.
 
 
 ## Clean
 To clean each folder, run the following command:
 ```
 make clean
+```
+## Valgrind
+To run valgrind on each program (with the recommended flags), run the following command:
+```
+make valgrind
 ```
 
 Francisco Pimentel Serra up202007723@fe.up.pt<br>
