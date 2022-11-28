@@ -55,9 +55,9 @@ int main(int argc, char *argv[]){
             printf("[pid%d] converting %s ...\n", getpid(), argv[i]);
 
             //Changing the file extention
-            char *oldFileName = (char *)malloc((strlen(argv[i]) + 2) * sizeof(char));
+            char *oldFileName = (char *)malloc((strlen(argv[i]) + 2) * sizeof(char)); 
+            char *newFileName = (char *)calloc((strlen(argv[i]) + 2), sizeof(char));
             strcpy(oldFileName, argv[i]);
-            char *newFileName = (char *)malloc((strlen(argv[i]) + 2) * sizeof(char));
             getFileName(oldFileName);
             strcat(newFileName, strcat(oldFileName, ".epub"));
 
