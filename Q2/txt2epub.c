@@ -39,11 +39,11 @@ int main(int argc, char *argv[]){
         char *c=(char*)malloc(strlen(argv[i])+3);
         strcpy(c, argv[i]);
         getFileName(c);
-        char *epub_file = strcat(c,".epub ");
+        char *epub_file = strcat(c,".epub");
         zip_argument_list[1+i]=(char*)malloc((strlen(epub_file)+1)*sizeof(char));
         strcpy(zip_argument_list[1+i], epub_file);
         free(c);
-        //free(epub_file);
+      
     }
 
     for (int i = 1; i < argc; i++){
@@ -77,14 +77,17 @@ int main(int argc, char *argv[]){
             return EXIT_FAILURE;
         }
 
+    sleep(5);
     // Executing the zip command
     for(int i=0;i<argc+2;i++){
-        printf("arra[%d]=%s\n",i,zip_argument_list[i]);
+       // if(zip_argument_list[i]==NULL)
+        printf("arra[%d]='%s'\n",i,zip_argument_list[i]);
     }
     if (execvp("zip",zip_argument_list)== -1){
         perror("execvp():");
         return EXIT_FAILURE;
     }
+
 
     return EXIT_SUCCESS;
 }
