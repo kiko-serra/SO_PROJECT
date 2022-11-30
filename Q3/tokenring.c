@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
         else if (pid[i - 1] == 0){
-            if (i == atoi(argv[1])){
+            if (i == numberOfPipes){
                 int length1 = snprintf(NULL, 0, "%d", i);
                 int length2 = snprintf(NULL, 0, "%d", i - 1);
                 wPipe = (char *)realloc(wPipe, (length1 + 7 + 1) * sizeof(char));
@@ -87,7 +87,8 @@ int main(int argc, char *argv[])
                 sprintf(wPipe, "pipe%dto%d", i, i + 1);
                 sprintf(rPipe, "pipe%dto%d", i - 1, i);
             }
-            srandom(time(NULL) - i);
+      
+            srand(time(NULL)-i);
             //Array to store the pipes
             int fd[2];
 
