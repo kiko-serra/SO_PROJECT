@@ -6,21 +6,33 @@ To compile and run each program, run the following command inside the correspond
 make
 ```
 ## Q1
-For Q1 after compiling, run the following command:
+For Q1 after compiling, you can either run:
+```
+$ make run
+```
+that runs `./tokenring 5 0.01 10` or manually by:
 ```
 $ ./samples quote.txt n m
 ```
 Where n is the number of fragments and m is the number of chatacters.
 
 ## Q2
-For Q2 after compiling, run the following command:
+For Q2 after compiling,you can either run:
+```
+$ make run
+```
+that runs `./txt2epub f1.txt f2.txt f3.txt f4.txt` or manually by:
 ```
 $ ./txt2epub f1.txt f2.txt f3.txt ... fn.tx
 ```
 Where n is the last file you wish to process.
 
 ## Q3
-For Q3 after compiling, run the following command:
+For Q3 after compiling, you can either run:
+```
+$ make run
+```
+that runs `./tokenring 5 0.01 10` or manually by:
 ```
 $ ./tokenring n p t
 ```
