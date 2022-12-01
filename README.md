@@ -10,7 +10,7 @@ For Q1 after compiling, you can either run:
 ```
 $ make run
 ```
-that runs `./samples quote.txt 4 8` or manually by:
+that runs `./samples quote.txt 4 8`.  Or manually by:
 ```
 $ ./samples quote.txt n m
 ```
@@ -21,7 +21,7 @@ For Q2 after compiling,you can either run:
 ```
 $ make run
 ```
-that runs `./txt2epub f1.txt f2.txt f3.txt f4.txt` or manually by:
+that runs `./txt2epub f1.txt f2.txt f3.txt f4.txt`.  Or manually by:
 ```
 $ ./txt2epub f1.txt f2.txt f3.txt ... fn.tx
 ```
@@ -32,7 +32,7 @@ For Q3 after compiling, you can either run:
 ```
 $ make run
 ```
-that runs `./tokenring 5 0.01 10` or manually by:
+that runs `./tokenring 5 0.01 10`.  Or manually by:
 ```
 $ ./tokenring n p t
 ```
