@@ -62,8 +62,10 @@ int main(int argc, char *argv[]){
             strcat(newFileName, strcat(oldFileName, ".epub"));
 
             //Executing the pandoc command
-            if (execlp("pandoc", "pandoc", argv[i], "-o", newFileName, (char *)NULL) == -1)
+            if (execlp("pandoc", "pandoc", argv[i], "-o", newFileName, (char *)NULL) == -1){
                 perror("execlp():");
+                return EXIT_FAILURE;
+            }
 
             //Let the memory be free!!
             free(oldFileName);
