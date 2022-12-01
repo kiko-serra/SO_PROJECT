@@ -9,6 +9,23 @@
 #include <fcntl.h>
 #include <time.h>
 
+// Gets the probability divider, for example:
+// If probability is 0.1 we get 10, if its 0.01 we get 100 etc
+int getProbabilitydivider(float probability){
+
+    if(probability==1)
+        return 1;
+    int divider=1;
+
+    // its "<0.99" because 0.1,0.001 and the like dont work otherwise
+    while(probability<0.99){
+        probability*=(float)10;     
+        divider*=10;
+    }
+    return divider;
+}
+
+
 // Creates the pipes needed
 int createpipes(int numberOfPipes)
 {
@@ -45,8 +62,8 @@ int main(int argc, char *argv[])
     int numberOfPipes = atoi(argv[1]);
     double probability = atof(argv[2]);
     int waitTime = atoi(argv[3]);
+    int randLimit=getProbabilitydivisor(probability);
     int val = 0;
-
     if (createpipes(numberOfPipes)){
         printf("Error creating pipes\n");
         return EXIT_FAILURE;
@@ -119,8 +136,9 @@ int main(int argc, char *argv[])
 
                 close(fd[0]);
 
-                int number = rand() % (int)(1 / probability);
-                if (number == 0){
+                float number=((float)(rand()%randLimit+1)/randLimit);
+                
+                if (number <= probability){
                     printf("[p%d] lock on token (val = %d)\n", i, val);
                     sleep(waitTime);
                     printf("[p%d] unlock token\n", i);
