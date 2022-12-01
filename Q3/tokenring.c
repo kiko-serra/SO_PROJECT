@@ -11,7 +11,7 @@
 
 // Gets the probability divider, for example:
 // If probability is 0.1 we get 10, if its 0.01 we get 100 etc
-int getProbabilitydivider(float probability){
+int getProbabilityDivider(float probability){
 
     if(probability==1)
         return 1;
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     int numberOfPipes = atoi(argv[1]);
     double probability = atof(argv[2]);
     int waitTime = atoi(argv[3]);
-    int randLimit=getProbabilitydivisor(probability);
+    int randLimit=getProbabilityDivider(probability);
     int val = 0;
     if (createpipes(numberOfPipes)){
         printf("Error creating pipes\n");
