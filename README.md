@@ -50,7 +50,7 @@ To run valgrind on each program (with the recommended flags), run the following 
 make valgrind
 ```
 
-Francisco Pimentel Serra up202007723@fe.up.pt<br>
-Pedro Miguel da Silva Correia up202006199@fe.up.pt<br>
-Guilherme de Sousa Ribeiro up202108731@fe.up.pt<br>
-João Pedro Silva Duarte up201504089@fe.up.pt<br>
+Francisco Pimentel Serra 202007723 up202007723@fe.up.pt<br>
+Pedro Miguel da Silva Correia 202006199 up202006199@fe.up.pt<br>
+Guilherme de Sousa Ribeiro 202108731 up202108731@fe.up.pt<br>
+João Pedro Silva Duarte 201504089 up201504089@fe.up.pt<br>
