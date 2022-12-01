@@ -10,7 +10,7 @@ For Q1 after compiling, you can either run:
 ```
 $ make run
 ```
-that runs `./tokenring 5 0.01 10` or manually by:
+that runs `./samples quote.txt 4 8` or manually by:
 ```
 $ ./samples quote.txt n m
 ```
